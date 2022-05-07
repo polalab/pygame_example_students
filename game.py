@@ -9,8 +9,7 @@ vec = pygame.math.Vector2  # will be used as a position vector
 from pygame.locals import (
     K_LEFT,
     K_RIGHT,
-    K_UP,
-    K_SPACE
+    K_UP
 )  # keys that will be pressed by the user
 
 
@@ -35,24 +34,21 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.surf.get_rect()  
         self.vel = vec(0,0)  # velocity
         self.acc = vec(0,0)  # acceleration 
+        self.is_jumping = False  # if it is True, the player can't jump again
 
     def move(self, pressed_keys):
-        self.acc = vec(0,0.003)  # gravity
-        self.acc.x += self.vel.x
-        self.vel += self.acc
+        self.acc.y = 0.003  # gravity
         self.pos += self.vel + 0.002 * self.acc        
 
         if pressed_keys[K_UP]:
-            while self.pos.y >= SCREEN_HEIGHT - 150:
-                self.acc = vec(0,0.003)
-                self.acc.x += self.vel.x
-                self.vel += self.acc
-                self.pos += -self.vel + 0.002 * self.acc
-
-            if self.pos.y >= SCREEN_HEIGHT -50:  # upper constraint for jumping 
-                self.rect.bottomleft = SCREEN_HEIGHT -50  
-
-            
+            if self.is_jumping == False:
+                self.is_jumping = True
+                while self.pos.y >= SCREEN_HEIGHT - 150:
+                    self.vel += self.acc  # velocity relation (so the jump is faster then the fall)
+                    self.pos += -self.vel + 0.002 * self.acc  # jump (so the gravity but opposite sign)
+                if self.pos.y >= SCREEN_HEIGHT -50:  # upper constraint for jumping 
+                    self.rect.bottomleft = SCREEN_HEIGHT -50  
+             
         # move left
         if pressed_keys[K_LEFT]:
             self.pos.x += -5
@@ -62,8 +58,9 @@ class Player(pygame.sprite.Sprite):
             self.pos.x += 5
 
         #stay on the ground
-        if self.pos.y >= SCREEN_HEIGHT -50:
-            self.pos.y = SCREEN_HEIGHT 
+        if self.pos.y >= SCREEN_HEIGHT - 10:
+            self.pos.y = SCREEN_HEIGHT - 10
+            self.is_jumping = False
         
         # stay between right and left
         if self.pos.x >= SCREEN_WIDTH:
@@ -123,7 +120,7 @@ screen.fill((0,0,0))
 
 # Lives
 lives = 5  # number of lives at the beginning
-font= pygame.font.SysFont('Arial', 100)  # setting up font
+font= pygame.font.SysFont('Arial', 50)  # setting up font
 
 def show_lives(lives):
     lives_value = pygame.font.Font.render(font, "Lives: " + str(lives), True, (225,223,225))  # render the text
@@ -203,7 +200,7 @@ while running:
             lives -= 1
 
             # game over at lives = 0
-            if lives == 4:
+            if lives == 0:
                 game_over = True
                               
 
