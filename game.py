@@ -31,7 +31,11 @@ pygame.time.set_timer(ADDRASPBERRY, 3500)
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
-        self.surf = pygame.Surface((30, 30))  # square 30 by 30 pix
+        self.surf = pygame.Surface((50, 50))  # square 30 by 30 pix
+
+        image_not_scaled = pygame.image.load("Desktop/Teacher Assistant/pygame/cat.png")
+        self.image = pygame.transform.scale(image_not_scaled, (50, 50))
+
         self.pos = vec((SCREEN_WIDTH/2, SCREEN_HEIGHT))  # initial position of the player
         self.rect = self.surf.get_rect()  
         self.vel = vec(0,0)  # velocity
@@ -80,8 +84,11 @@ class Player(pygame.sprite.Sprite):
 class Bullet(pygame.sprite.Sprite):
     def __init__(self):
         super(Bullet, self).__init__()
-        self.surf = pygame.Surface((20, 20))
-        self.surf.fill((5, 255, 255))  # set the color of the rec
+        self.surf = pygame.Surface((40, 40))
+
+        image_not_scaled = pygame.image.load("Desktop/Teacher Assistant/pygame/fire_up.png")
+        self.image = pygame.transform.scale(image_not_scaled, (40, 40))
+
         self.rect = self.surf.get_rect()
         self.pos = vec((random.randint(0, SCREEN_WIDTH), 0))
         self.speed = random.randint(1, 5)  # random speed between 1 and 5
@@ -96,8 +103,12 @@ class Bullet(pygame.sprite.Sprite):
 class Rollers(pygame.sprite.Sprite):
     def __init__(self):
         super(Rollers, self).__init__()
-        self.surf = pygame.Surface((30, 30))
-        self.surf.fill((80, 100, 255))
+        
+        self.surf = pygame.Surface((40, 40))
+
+        image_not_scaled = pygame.image.load("Desktop/Teacher Assistant/pygame/roll.png")
+        self.image = pygame.transform.scale(image_not_scaled, (40, 40))
+
         self.rect = self.surf.get_rect()
         self.side = random.choice([0, SCREEN_WIDTH])  # randomly starting from the left or from the right
         self.pos = vec(self.side, SCREEN_HEIGHT - 20)
@@ -119,6 +130,8 @@ class Raspberries(pygame.sprite.Sprite):
         self.surf = pygame.Surface((20, 20))
         self.surf.fill((255,105,180))  # set the color of the rec
         self.rect = self.surf.get_rect()
+        image_not_scaled = pygame.image.load("Desktop/Teacher Assistant/pygame/rasp.png")
+        self.image = pygame.transform.scale(image_not_scaled, (40, 40))
         self.pos = vec((random.randint(0, SCREEN_WIDTH), 0))
         self.speed = random.randint(1, 5)  # random speed between 1 and 5
     
@@ -133,8 +146,13 @@ class Raspberries(pygame.sprite.Sprite):
 SCREEN_WIDTH = 900.0
 SCREEN_HEIGHT = 500.0
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-shot = pygame.image.load("Desktop/Teacher Assistant/pygame/back.jpg")  # setting up bg image
-go = pygame.image.load("Desktop/Teacher Assistant/pygame/go.jpg")  # setting up game over screen image
+
+shot_not_scaled = pygame.image.load("Desktop/Teacher Assistant/pygame/back.jpg")  # bg image load
+shot =  pygame.transform.scale(shot_not_scaled, (SCREEN_WIDTH, SCREEN_HEIGHT))  # bg image rescaled
+
+go_not_scaled = pygame.image.load("Desktop/Teacher Assistant/pygame/go.jpg")  # setting up game over screen image
+go =  pygame.transform.scale(go_not_scaled, (SCREEN_WIDTH, SCREEN_HEIGHT))  # bg image rescaled
+
 screen.fill((0,0,0))
 
 # Lives
@@ -144,9 +162,9 @@ font= pygame.font.SysFont('Arial', 50)  # setting up font
 
 def show_lives_and_points(lives, points):
     lives_value = pygame.font.Font.render(font, "Lives: " + str(lives), True, (225,223,225))  # render the text
-    points_value = pygame.font.Font.render(font, "Points: " + str(points), True, (255,105,180))
+    points_value = pygame.font.Font.render(font, "Points: " + str(points), True, (255,192,203))
     screen.blit(lives_value, (50, 50))  # show it on screen 
-    screen.blit(points_value, (300, 50))  # show it on screen 
+    screen.blit(points_value, (550, 50))  # show it on screen 
 
 # Game over function
 def game_over_fun (points):
@@ -214,7 +232,7 @@ while running:
     screen.blit(shot, (0,0))
 
     # Set player on the screen 
-    screen.blit(player.surf, player.rect)
+    screen.blit(player.image, player.rect)
     # Get all the keys currently pressed
     pressed_keys = pygame.key.get_pressed()
     # Update the player sprite based on user keypresses
@@ -224,7 +242,7 @@ while running:
     show_lives_and_points(lives, points) 
     
     for bullet in bullets:
-        screen.blit(bullet.surf, bullet.rect)
+        screen.blit(bullet.image, bullet.rect)
         bullet.move()  # move bullets (both types have the function move)
 
         coll = pygame.sprite.groupcollide(bullets, players, True, False)  # check wheter there was a collision
@@ -237,7 +255,7 @@ while running:
                 game_over = True
         
     for rasperry in raspberries:
-        screen.blit(rasperry.surf, rasperry.rect)
+        screen.blit(rasperry.image, rasperry.rect)
         rasperry.move()
 
         catch = pygame.sprite.groupcollide(raspberries, players, True, False)  # check wheter raspberry was cought
