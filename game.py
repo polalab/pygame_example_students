@@ -24,6 +24,8 @@ pygame.time.set_timer(ADDBULLET, 3000)
 ADDROLL = pygame.USEREVENT + 0
 pygame.time.set_timer(ADDROLL, 4000)
 
+ADDRASPBERRY = pygame.USEREVENT + 2
+pygame.time.set_timer(ADDRASPBERRY, 3500)
 
 
 class Player(pygame.sprite.Sprite):
@@ -90,7 +92,7 @@ class Bullet(pygame.sprite.Sprite):
         
 
 
-# rollers right - left
+# bullets right - left
 class Rollers(pygame.sprite.Sprite):
     def __init__(self):
         super(Rollers, self).__init__()
@@ -111,6 +113,23 @@ class Rollers(pygame.sprite.Sprite):
 
 
 
+class Raspberries(pygame.sprite.Sprite):
+    def __init__(self):
+        super(Raspberries, self).__init__()
+        self.surf = pygame.Surface((20, 20))
+        self.surf.fill((255,105,180))  # set the color of the rec
+        self.rect = self.surf.get_rect()
+        self.pos = vec((random.randint(0, SCREEN_WIDTH), 0))
+        self.speed = random.randint(1, 5)  # random speed between 1 and 5
+    
+    def move(self):  # moving top - down 
+        self.pos.y += self.speed
+        self.rect.center = self.pos 
+        
+        
+    
+
+
 SCREEN_WIDTH = 900.0
 SCREEN_HEIGHT = 500.0
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -120,16 +139,21 @@ screen.fill((0,0,0))
 
 # Lives
 lives = 5  # number of lives at the beginning
+points = 0 # number of points at the beginning
 font= pygame.font.SysFont('Arial', 50)  # setting up font
 
-def show_lives(lives):
+def show_lives_and_points(lives, points):
     lives_value = pygame.font.Font.render(font, "Lives: " + str(lives), True, (225,223,225))  # render the text
+    points_value = pygame.font.Font.render(font, "Points: " + str(points), True, (255,105,180))
     screen.blit(lives_value, (50, 50))  # show it on screen 
+    screen.blit(points_value, (300, 50))  # show it on screen 
 
 # Game over function
-def game_over_fun ():
+def game_over_fun (points):
     screen.blit(go, (0,0))
     screen.blit(pygame.font.Font.render(font, "Game Over", True, (225,225,225)), (100, 100))
+    screen.blit(pygame.font.Font.render(font, "Points: " + str(points) + "!", True, (225,225,225)), (150, 150))
+    screen.blit(pygame.font.Font.render(font, "Press space to play again", True, (225,225,225)), (300, 300))
     pygame.display.flip()
 
 
@@ -147,9 +171,12 @@ def game_over_fun ():
 player = Player()  # main player
 
 bullets = pygame.sprite.Group()  # bullets as a group 
+raspberries = pygame.sprite.Group()  # raspberries as a group
 
 players = pygame.sprite.Group()  # players as a group (only for comparison later)
 players.add(player)
+
+
 
 
 
@@ -159,8 +186,9 @@ game_over = False
 while running:
 
     if game_over == True:
-        game_over_fun()  # call the game over function
+        game_over_fun(points)  # call the game over function
         lives = 5  # set lives to 5 back
+        points = 0 # set points to 0 
         game_over = False  # end game over
 
         
@@ -177,6 +205,10 @@ while running:
         new_roll = Rollers()
         bullets.add(new_roll)
 
+    elif event.type == ADDRASPBERRY:   # create new roll in the time set by ADDRASPBERRY
+        new_rasp = Raspberries()
+        raspberries.add(new_rasp)
+
 
     # Set the image on screen (if you don't do it enemies and players will replace it)
     screen.blit(shot, (0,0))
@@ -189,20 +221,28 @@ while running:
     player.move(pressed_keys)
 
     # Show the lives score by calling the function
-    show_lives(lives) 
+    show_lives_and_points(lives, points) 
     
     for bullet in bullets:
         screen.blit(bullet.surf, bullet.rect)
         bullet.move()  # move bullets (both types have the function move)
 
         coll = pygame.sprite.groupcollide(bullets, players, True, False)  # check wheter there was a collision
+        
         if coll:
             lives -= 1
 
             # game over at lives = 0
             if lives == 0:
                 game_over = True
-                              
+        
+    for rasperry in raspberries:
+        screen.blit(rasperry.surf, rasperry.rect)
+        rasperry.move()
+
+        catch = pygame.sprite.groupcollide(raspberries, players, True, False)  # check wheter raspberry was cought
+        if catch:
+            points += 1
 
     
    
