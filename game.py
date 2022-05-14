@@ -1,7 +1,7 @@
 # Import the pygame module
 import pygame
 import random
-import time
+
 
 
 vec = pygame.math.Vector2  # will be used as a position vector
