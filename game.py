@@ -33,7 +33,7 @@ class Player(pygame.sprite.Sprite):
         super(Player, self).__init__()
         self.surf = pygame.Surface((50, 50))  # square 30 by 30 pix
 
-        image_not_scaled = pygame.image.load("Desktop/Teacher Assistant/pygame/cat.png")
+        image_not_scaled = pygame.image.load("./cat.png")
         self.image = pygame.transform.scale(image_not_scaled, (50, 50))
 
         self.pos = vec((SCREEN_WIDTH/2, SCREEN_HEIGHT))  # initial position of the player
@@ -48,10 +48,11 @@ class Player(pygame.sprite.Sprite):
 
         if pressed_keys[K_UP]:
             if self.is_jumping == False:
+                self.vel = vec(0,0)
                 self.is_jumping = True
                 while self.pos.y >= SCREEN_HEIGHT - 150:
                     self.vel += self.acc  # velocity relation (so the jump is faster then the fall)
-                    self.pos += -self.vel + 0.002 * self.acc  # jump (so the gravity but opposite sign)
+                    self.pos += -self.vel + 0.001 * self.acc  # jump (so the gravity but opposite sign)
                 if self.pos.y >= SCREEN_HEIGHT -50:  # upper constraint for jumping 
                     self.rect.bottomleft = SCREEN_HEIGHT -50  
              
@@ -86,7 +87,7 @@ class Bullet(pygame.sprite.Sprite):
         super(Bullet, self).__init__()
         self.surf = pygame.Surface((40, 40))
 
-        image_not_scaled = pygame.image.load("Desktop/Teacher Assistant/pygame/fire_up.png")
+        image_not_scaled = pygame.image.load("./fire_up.png")
         self.image = pygame.transform.scale(image_not_scaled, (40, 40))
 
         self.rect = self.surf.get_rect()
@@ -106,7 +107,7 @@ class Rollers(pygame.sprite.Sprite):
         
         self.surf = pygame.Surface((40, 40))
 
-        image_not_scaled = pygame.image.load("Desktop/Teacher Assistant/pygame/roll.png")
+        image_not_scaled = pygame.image.load("./roll.png")
         self.image = pygame.transform.scale(image_not_scaled, (40, 40))
 
         self.rect = self.surf.get_rect()
@@ -130,7 +131,7 @@ class Raspberries(pygame.sprite.Sprite):
         self.surf = pygame.Surface((20, 20))
         self.surf.fill((255,105,180))  # set the color of the rec
         self.rect = self.surf.get_rect()
-        image_not_scaled = pygame.image.load("Desktop/Teacher Assistant/pygame/rasp.png")
+        image_not_scaled = pygame.image.load("./rasp.png")
         self.image = pygame.transform.scale(image_not_scaled, (40, 40))
         self.pos = vec((random.randint(0, SCREEN_WIDTH), 0))
         self.speed = random.randint(1, 5)  # random speed between 1 and 5
@@ -147,10 +148,10 @@ SCREEN_WIDTH = 900.0
 SCREEN_HEIGHT = 500.0
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-shot_not_scaled = pygame.image.load("Desktop/Teacher Assistant/pygame/back.jpg")  # bg image load
+shot_not_scaled = pygame.image.load("./back.jpg")  # bg image load
 shot =  pygame.transform.scale(shot_not_scaled, (SCREEN_WIDTH, SCREEN_HEIGHT))  # bg image rescaled
 
-go_not_scaled = pygame.image.load("Desktop/Teacher Assistant/pygame/go.jpg")  # setting up game over screen image
+go_not_scaled = pygame.image.load("./go.jpg")  # setting up game over screen image
 go =  pygame.transform.scale(go_not_scaled, (SCREEN_WIDTH, SCREEN_HEIGHT))  # bg image rescaled
 
 screen.fill((0,0,0))
